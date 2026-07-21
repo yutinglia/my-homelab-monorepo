@@ -2,7 +2,7 @@
 
 Self-hosted homelab 應用與 CI/CD monorepo。容器化部署，GitHub Actions self-hosted runner 自動 build + deploy。
 
-> PVE 礎設施配置（網路拓撲、防火牆規則、反向代理等）由獨立的 private repo 管理，不對外暴露。
+> PVE 基礎設施配置（網路拓撲、防火牆規則、反向代理等）由獨立的 private repo 管理，不對外暴露。
 
 ## CI/CD
 
