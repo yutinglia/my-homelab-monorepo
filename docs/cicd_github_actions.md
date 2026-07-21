@@ -1,30 +1,30 @@
-# GitHub Actions CI/CD 部署筆記
+# GitHub Actions CI/CD deployment notes
 
-## 概覽
+## Overview
 
-本專案使用 GitHub Actions 自動將應用部署到 Homelab 的 Docker Host VM。
+This project uses GitHub Actions to automatically deploy applications to the Homelab Docker Host VM.
 
-**架構選擇：全部容器化，本地 build（方案 A）**
+**Architecture choice: fully containerized, local build (option A)**
 
 ```
 GitHub Actions (self-hosted runner on Docker VM)
-  → 檢測哪個 app 變了 (path filter)
+  → detect which app changed (path filter)
   → docker build -t homelab/<app>:latest apps/<app>/
   → docker compose -f ~/services/<app>/docker-compose.yml up -d
   → reverse proxy → Docker VM:<port>
 ```
 
-**設計原則：**
+**Design principles:**
 
-- CI/CD 只碰 Docker Host VM，反向代理配置由手動管理（一次性設定）
-- 每個 app 有自己的 Dockerfile + docker-compose.yml，部署到 `~/services/<app>/`
-- 靜態站和動態站統一用 Docker 容器，流程一致
-- 不需要外部 registry，本地 build 本地跑
-- 版本可追溯（image tag），回滾方便
+- CI/CD only touches the Docker Host VM; reverse proxy configuration is managed manually (one-time setup)
+- Each app has its own Dockerfile + docker-compose.yml, deployed to `~/services/<app>/`
+- Static and dynamic sites both run as Docker containers for a consistent workflow
+- No external registry needed; build and run locally
+- Versions are traceable (image tags), making rollback easy
 
 ---
 
-## 目錄結構
+## Directory structure
 
 ```
 .github/
@@ -34,50 +34,50 @@ GitHub Actions (self-hosted runner on Docker VM)
 
 ---
 
-## 方案 A：Self-hosted Runner + Docker 化部署
+## Option A: Self-hosted runner + Dockerized deployment
 
-### 1. 在 Docker Host VM 安裝 Runner
+### 1. Install the runner on the Docker Host VM
 
-> Docker Host VM 已有 GitHub SSH key 和 git 配置。
+> The Docker Host VM already has a GitHub SSH key and git configured.
 
-前往 GitHub repo → **Settings → Actions → Runners → New self-hosted runner**，選 Linux x64，依頁面指令操作：
+Go to the GitHub repo → **Settings → Actions → Runners → New self-hosted runner**, select Linux x64, and follow the instructions on the page:
 
 ```bash
 mkdir ~/actions-runner && cd ~/actions-runner
 
-# 下載（版本號以頁面顯示為準）
+# Download (version number per what the page shows)
 curl -o actions-runner-linux-x64.tar.gz -L \
   https://github.com/actions/runner/releases/latest/download/actions-runner-linux-x64-2.x.x.tar.gz
 
 tar xzf ./actions-runner-linux-x64.tar.gz
 
-# 設定（token 從 GitHub 頁面取得，有效期 1 小時）
+# Configure (token obtained from the GitHub page, valid for 1 hour)
 ./config.sh --url https://github.com/yutinglia/my-homelab-monorepo --token YOUR_TOKEN
 
-# 安裝為 systemd 服務並啟動
+# Install as a systemd service and start it
 sudo ./svc.sh install
 sudo ./svc.sh start
 ```
 
-確認 Runner 上線：
+Confirm the runner is online:
 
 ```bash
 sudo ./svc.sh status
-# 或
+# or
 systemctl status actions.runner.*
 ```
 
-### 2. Workflow 觸發條件
+### 2. Workflow trigger conditions
 
-- Push 到 `main` branch，且異動路徑在 `apps/svelte_projects/**`
-- 或手動觸發（`workflow_dispatch`）
+- Push to the `main` branch with changes under `apps/svelte_projects/**`
+- Or manual trigger (`workflow_dispatch`)
 
-### 3. 部署流程
+### 3. Deployment process
 
-每個 app 在 monorepo 中有自己的 `Dockerfile`，部署到 Docker VM 的 `~/services/<app>/`：
+Each app has its own `Dockerfile` in the monorepo and is deployed to `~/services/<app>/` on the Docker VM:
 
 ```bash
-# Runner 執行的步驟（簡化）：
+# Steps executed by the runner (simplified):
 cd apps/svelte_projects
 
 # Build Docker images
@@ -89,50 +89,50 @@ docker compose -f ~/services/entry/docker-compose.yml up -d
 docker compose -f ~/services/profile/docker-compose.yml up -d
 ```
 
-### 4. 部署目標與反向代理配置
+### 4. Deployment targets and reverse proxy configuration
 
-> 詳細的部署目標表、反向代理配置結構、Docker Host VM 環境設定，
-> 請見 private configs 倉庫的相關文檔。
+> For the detailed deployment target table, reverse proxy configuration structure,
+> and Docker Host VM environment setup, see the relevant docs in the private configs repo.
 
-未來新增 app 時：
-1. 在 `apps/<app>/` 加 `Dockerfile`
-2. 在 `~/services/<app>/` 加 `docker-compose.yml`
-3. 反向代理加對應站點配置（一次性，手動設定）
-4. Workflow 加 path filter 和 build/deploy 步驟
+When adding a new app in the future:
+1. Add a `Dockerfile` in `apps/<app>/`
+2. Add a `docker-compose.yml` in `~/services/<app>/`
+3. Add the corresponding site configuration to the reverse proxy (one-time, manual setup)
+4. Add a path filter and build/deploy steps to the workflow
 
 ---
 
-## 常見問題
+## Common issues
 
-### Runner 顯示 Offline
+### Runner shows Offline
 
 ```bash
-# 重啟 runner 服務
+# Restart the runner service
 sudo ./svc.sh stop
 sudo ./svc.sh start
-# 確認網路可以連到 GitHub
+# Confirm the network can reach GitHub
 curl -I https://github.com
 ```
 
-### docker build 失敗
+### docker build fails
 
 ```bash
-# 確認 Dockerfile 語法
+# Check the Dockerfile syntax
 docker build --no-cache apps/<app>/
 
-# 確認磁碟空間
+# Check disk space
 df -h
-# 清理舊 image
+# Clean up old images
 docker image prune -a
 ```
 
-### docker build 中 pnpm install 失敗（lockfile 不同步）
+### pnpm install fails during docker build (lockfile out of sync)
 
-Dockerfile 內 `pnpm install --frozen-lockfile`，若本地有更新套件但未 commit `pnpm-lock.yaml`，build 會失敗。解法：
+The Dockerfile runs `pnpm install --frozen-lockfile`. If packages were updated locally but `pnpm-lock.yaml` was not committed, the build will fail. Fix:
 
 ```bash
 cd apps/svelte_projects
-pnpm install          # 更新 lockfile
+pnpm install          # update the lockfile
 git add pnpm-lock.yaml
 git commit -m "chore: update lockfile"
 git push
@@ -140,6 +140,6 @@ git push
 
 ---
 
-## 相關檔案
+## Related files
 
 - [.github/workflows/deploy.yml](../.github/workflows/deploy.yml) — Self-hosted runner workflow

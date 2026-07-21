@@ -1,38 +1,38 @@
-# Paraglide JS i18n 設定筆記
+# Paraglide JS i18n setup notes
 
-## 概覽
+## Overview
 
-`apps/svelte_projects/` 下的 `entry` 與 `profile` 兩個 SvelteKit app 使用 [Paraglide JS](https://paraglidejs.com/sveltekit) 做國際化，支援 `en` 與 `zh-hant`。
+The `entry` and `profile` SvelteKit apps under `apps/svelte_projects/` use [Paraglide JS](https://paraglidejs.com/sveltekit) for internationalization, supporting `en` and `zh-hant`.
 
-採用 monorepo Pattern 1（每個 app 各自編譯）：
-- 共用一個 inlang project（`apps/svelte_projects/project.inlang/`）與翻譯訊息（`apps/svelte_projects/messages/`）
-- 每個 app 透過 `paraglideVitePlugin` 從 `../project.inlang` 編譯，輸出到各自的 `src/lib/paraglide/`
+This uses monorepo Pattern 1 (each app compiles independently):
+- Share a single inlang project (`apps/svelte_projects/project.inlang/`) and translation messages (`apps/svelte_projects/messages/`)
+- Each app compiles via `paraglideVitePlugin` from `../project.inlang` and outputs to its own `src/lib/paraglide/`
 
-## 目錄結構
+## Directory structure
 
 ```
 apps/svelte_projects/
 ├── project.inlang/
-│   └── settings.json        # 共用 inlang project (baseLocale, locales, plugin)
+│   └── settings.json        # Shared inlang project (baseLocale, locales, plugin)
 ├── messages/
-│   ├── en.json              # 英文翻譯
-│   └── zh-hant.json         # 繁體中文翻譯
+│   ├── en.json              # English translations
+│   └── zh-hant.json         # Traditional Chinese translations
 ├── entry/
 │   ├── vite.config.ts       # paraglideVitePlugin (project: '../project.inlang')
 │   ├── src/
 │   │   ├── app.html         # <html lang="%lang%" dir="%dir%">
 │   │   ├── hooks.server.ts  # paraglideMiddleware
 │   │   ├── hooks.ts         # reroute (deLocalizeUrl)
-│   │   ├── lib/paraglide/   # 編譯產出 (auto-gitignored)
+│   │   ├── lib/paraglide/   # Compiled output (auto-gitignored)
 │   │   └── routes/
 │   │       ├── +layout.svelte  # locale switcher (data-sveltekit-reload)
-│   │       └── +page.svelte    # 用 m.*() 取代硬編碼字串
+│   │       └── +page.svelte    # use m.*() instead of hardcoded strings
 │   └── Dockerfile
 └── profile/
-    └── (同 entry 結構)
+    └── (same structure as entry)
 ```
 
-## 關鍵設定
+## Key settings
 
 ### vite.config.ts
 
@@ -41,13 +41,13 @@ paraglideVitePlugin({
     project: '../project.inlang',
     outdir: './src/lib/paraglide',
     emitTsDeclarations: true,
-    experimentalPerLocaleBuild: true,    // 需 Vite 8 + SvelteKit 2.69+
+    experimentalPerLocaleBuild: true,    // requires Vite 8 + SvelteKit 2.69+
     strategy: ['url', 'cookie', 'baseLocale']
 })
 ```
 
-- `experimentalPerLocaleBuild`: 每個 locale 產出獨立的 client asset graph（`_app/immutable/__paraglide/zh-hant-<hash>/`），base locale 仍用 `_app/immutable/`
-- `strategy`: URL 為主（`/` = en, `/zh-hant` = zh-hant），cookie 次之，最後 fallback 到 baseLocale
+- `experimentalPerLocaleBuild`: produces an independent client asset graph per locale (`_app/immutable/__paraglide/zh-hant-<hash>/`); the base locale still uses `_app/immutable/`
+- `strategy`: URL first (`/` = en, `/zh-hant` = zh-hant), then cookie, finally falls back to baseLocale
 
 ### app.html
 
@@ -56,7 +56,7 @@ paraglideVitePlugin({
 <html lang="%lang%" dir="%dir%">
 ```
 
-`%lang%` / `%dir%` 由 `hooks.server.ts` 的 `transformPageChunk` 在 SSR 時替換。
+`%lang%` / `%dir%` are replaced by `transformPageChunk` in `hooks.server.ts` during SSR.
 
 ### hooks.server.ts
 
@@ -72,15 +72,15 @@ const paraglideHandle: Handle = ({ event, resolve }) =>
     });
 ```
 
-### hooks.ts（reroute）
+### hooks.ts (reroute)
 
 ```ts
 export const reroute: Reroute = (request) => deLocalizeUrl(request.url).pathname;
 ```
 
-`reroute` 必須放在 `src/hooks.ts`（不是 `hooks.server.ts`），讓 SvelteKit 把 localized URL（如 `/zh-hant/`）對應到未本地化的內部路由。
+`reroute` must be placed in `src/hooks.ts` (not `hooks.server.ts`) so SvelteKit maps localized URLs (e.g., `/zh-hant/`) to the unlocalized internal route.
 
-### +layout.svelte（locale switcher）
+### +layout.svelte (locale switcher)
 
 ```svelte
 <script lang="ts">
@@ -99,74 +99,74 @@ export const reroute: Reroute = (request) => deLocalizeUrl(request.url).pathname
 </nav>
 ```
 
-`data-sveltekit-reload` 必加：cross-locale navigation 必須是完整 document reload（不能只 hydration），否則會混用不同 locale 的 client graph。同時這個 switcher 讓 SvelteKit prerender crawler 能爬到所有 locale 的頁面。
+`data-sveltekit-reload` is required: cross-locale navigation must be a full document reload (not hydration only), otherwise client graphs of different locales get mixed. This switcher also lets the SvelteKit prerender crawler reach pages of every locale.
 
-### 跨 app（子網域）保留 locale
+### Preserving locale across apps (subdomains)
 
-`entry`（`www.yutinglia.com`）和 `profile`（`profile.yutinglia.com`）是兩個獨立的 SvelteKit app，分別部署在不同子網域。strategy 是 `['url', 'cookie', 'baseLocale']`，但：
+`entry` (`www.yutinglia.com`) and `profile` (`profile.yutinglia.com`) are two independent SvelteKit apps deployed on different subdomains. The strategy is `['url', 'cookie', 'baseLocale']`, but:
 
-- `url` 策略的 default pattern `:protocol://:domain(.*)::port?/:path(.*)?` 對 *任何* URL 都會 match（base locale `en` 的 pattern 沒有 prefix），所以 root URL `/` 永遠解析成 `en`，cookie 策略根本輪不到。
-- `cookieDomain` 預設為 `""`（不寫 domain 屬性），cookie 只附在當前子網域，不會跨 `www` ↔ `profile`。
+- The default pattern of the `url` strategy `:protocol://:domain(.*)::port?/:path(.*)?` matches *any* URL (the base locale `en` pattern has no prefix), so the root URL `/` always resolves to `en` and the cookie strategy never gets a turn.
+- `cookieDomain` defaults to `""` (no domain attribute written), so the cookie only attaches to the current subdomain and won't cross `www` ↔ `profile`.
 
-也就是說，使用者在 `www.yutinglia.com/zh-hant` 點 profile 連結時，若連結是硬編碼 `https://profile.yutinglia.com`，會落到 `profile.yutinglia.com/`（英文），locale 不會被記住。
+In other words, when a user on `www.yutinglia.com/zh-hant` clicks a profile link that is hardcoded as `https://profile.yutinglia.com`, they land on `profile.yutinglia.com/` (English); the locale is not remembered.
 
-**解法**：跨 app 連結改用 `localizeHref()` 包住絕對 URL。`localizeHref` 內部會用 `getLocale()` 算出當前 locale，再套 URL pattern 加 prefix：
+**Solution**: wrap cross-app links with `localizeHref()` for absolute URLs. `localizeHref` internally uses `getLocale()` to determine the current locale, then applies the URL pattern to add the prefix:
 
 ```svelte
 <!-- entry/+page.svelte -->
 href: localizeHref("https://profile.yutinglia.com")
-// 在 en build  → "https://profile.yutinglia.com"
-// 在 zh-hant build → "https://profile.yutinglia.com/zh-hant"
+// in en build  → "https://profile.yutinglia.com"
+// in zh-hant build → "https://profile.yutinglia.com/zh-hant"
 
 <!-- profile/+page.svelte -->
 href={localizeHref("https://www.yutinglia.com")}
 ```
 
-`experimentalPerLocaleBuild: true` 時，每個 per-locale build 會把 `__PARAGLIDE_STATIC_LOCALE__` define 成該 locale，所以 `getLocale()` 在 build time 就是該 build 的 locale，prerender 出來的 HTML 裡連結會帶正確 prefix。注意：
+With `experimentalPerLocaleBuild: true`, each per-locale build defines `__PARAGLIDE_STATIC_LOCALE__` as that locale, so `getLocale()` is the build's locale at build time and the prerendered HTML links carry the correct prefix. Note:
 
-- 不需要設 `cookieDomain: "yutinglia.com"`。因為 SSG 下 nginx 直接吐 static HTML，不讀 cookie，跨子網域 cookie 在這個架構裡沒有作用。
-- `localizeHref` 對 cross-origin URL 會回傳絕對 URL（含 origin），不會降成相對路徑，符合跨 app 連結的需求。
+- No need to set `cookieDomain: "yutinglia.com"`. Under SSG, nginx serves static HTML directly without reading cookies, so cross-subdomain cookies have no effect in this architecture.
+- `localizeHref` returns an absolute URL (with origin) for cross-origin URLs rather than degrading to a relative path, which suits cross-app links.
 
-## 使用訊息
+## Using messages
 
 ```ts
 import * as m from "$lib/paraglide/messages.js";
 
 m.entry_tagline();                          // "IT engineer · Hong Kong. ..."
 m.copyright_year({ year: 2026 });            // "© 2026 Ting"
-m.profile_role({ locale: "zh-hant" });       // 強制特定 locale
+m.profile_role({ locale: "zh-hant" });       // force a specific locale
 ```
 
 ## SSG / Prerender
 
-兩個 app 都用 `adapter-static` + `prerender = true`：
+Both apps use `adapter-static` + `prerender = true`:
 
-- `/` → en（baseLocale，無 prefix）
-- `/zh-hant` → zh-hant（URL prefix）
+- `/` → en (baseLocale, no prefix)
+- `/zh-hant` → zh-hant (URL prefix)
 
-Build 產出：
+Build output:
 ```
 build/
 ├── index.html          # en, <html lang="en" dir="ltr">
 ├── zh-hant.html        # zh-hant, <html lang="zh-hant" dir="ltr">
 └── _app/immutable/
-    ├── __paraglide/zh-hant-<hash>/   # zh-hant 專屬 client graph
-    └── (base locale 用 _app/immutable)
+    ├── __paraglide/zh-hant-<hash>/   # zh-hant-specific client graph
+    └── (base locale uses _app/immutable)
 ```
 
-## 踩到的坑
+## Pitfalls encountered
 
 ### 1. Docker build ENOENT for settings.json
 
-**症狀**：CI `docker build` 失敗：
+**Symptom**: CI `docker build` fails:
 ```
 ERROR [paraglide-js] Failed to compile project:
 ENOENT: no such file or directory, open '../project.inlang/settings.json'
 ```
 
-**原因**：Dockerfile 只 `COPY shared/` 和 app 目錄，沒有 copy workspace root 的 `project.inlang/` 和 `messages/`。`vite.config.ts` 用 `project: '../project.inlang'`（相對於 app 目錄），在容器內會指到 `/build/project.inlang/`，但該目錄不存在。
+**Cause**: The Dockerfile only `COPY shared/` and the app directory; it does not copy the workspace root's `project.inlang/` and `messages/`. `vite.config.ts` uses `project: '../project.inlang'` (relative to the app directory), which inside the container points to `/build/project.inlang/`, but that directory does not exist.
 
-**解法**：Dockerfile 在 build 前加上：
+**Fix**: Add the following to the Dockerfile before the build:
 ```dockerfile
 COPY project.inlang/ project.inlang/
 COPY messages/ messages/
@@ -174,32 +174,32 @@ COPY messages/ messages/
 
 ### 2. `resolve(localizeHref(...))` type error
 
-**症狀**：svelte-check 報錯：
+**Symptom**: svelte-check reports:
 ```
 Argument of type '[string]' is not assignable to parameter of type
 '[route: "/"] | [route: `/?${string}`] | [route: `/#${string}`]'.
 ```
 
-**原因**：SvelteKit 2.70 的 `resolve()` from `$app/paths` 強型別到已知路由，不接受 plain string。Paraglide 文件的範例 `resolve(localizeHref(...))` 在這個版本 typecheck 不過。
+**Cause**: SvelteKit 2.70's `resolve()` from `$app/paths` is strictly typed to known routes and does not accept a plain string. The Paraglide docs example `resolve(localizeHref(...))` does not typecheck on this version.
 
-**解法**：改用 `base` 拼接（`base` 在此專案為空字串，行為等同）：
+**Fix**: Use `base` concatenation instead (`base` is an empty string in this project, so behavior is identical):
 ```svelte
 href={`${base}${localizeHref(page.url.pathname, { locale })}`}
 ```
 
-### 3. 編譯產出不在 git 裡
+### 3. Compiled output is not in git
 
-`src/lib/paraglide/` 由 paraglide 自動生成 `.gitignore`（內容 `*`），整個目錄不進版控。
+`src/lib/paraglide/` has an auto-generated `.gitignore` (content `*`) from paraglide, so the entire directory is not version-controlled.
 
-**影響**：clone 後直接跑 `svelte-check` 會報「找不到 `$lib/paraglide/*`」，必須先跑過一次 `pnpm dev` 或 `pnpm build` 讓 vite plugin 編譯產出檔案。
+**Impact**: Running `svelte-check` right after clone reports "cannot find `$lib/paraglide/*`"; you must run `pnpm dev` or `pnpm build` once first so the vite plugin emits the files.
 
-### 4. nginx 404 for `/zh-hant`（無副檔名路由）
+### 4. nginx 404 for `/zh-hant` (extension-less route)
 
-**症狀**：Docker 容器（`nginx:alpine`）部署後，訪問 `/zh-hant` 回 404，只有 `/` 正常。
+**Symptom**: After deploying the Docker container (`nginx:alpine`), visiting `/zh-hant` returns 404; only `/` works.
 
-**原因**：`adapter-static` 的 prerender 對非 base locale 產出的是 `build/zh-hant.html`（單一檔案，非 `zh-hant/index.html` 目錄）。nginx 預設 `try_files` 不會嘗試 `.html` 副檔名 fallback，所以 `/zh-hant` 找不到對應檔案。
+**Cause**: `adapter-static`'s prerender for non-base locales produces `build/zh-hant.html` (a single file, not a `zh-hant/index.html` directory). nginx's default `try_files` does not try `.html` extension fallback, so `/zh-hant` finds no matching file.
 
-**解法**：自訂 nginx config（`shared/nginx/default.conf.template`，在 Dockerfile 裡 COPY 到 `/etc/nginx/conf.d/default.conf`），加上 `.html` fallback：
+**Fix**: Custom nginx config (`shared/nginx/default.conf.template`, COPY'd to `/etc/nginx/conf.d/default.conf` in the Dockerfile), adding `.html` fallback:
 
 ```nginx
 location / {
@@ -207,15 +207,15 @@ location / {
 }
 ```
 
-同時加上 `_app/immutable/` 的 immutable caching header（SvelteKit 資產含 per-locale paraglide client graph，檔名有 hash 可安全永久快取）。
+Also add an immutable caching header for `_app/immutable/` (SvelteKit assets include per-locale paraglide client graphs; filenames are hashed and safe to cache permanently).
 
-### 5. nginx 404 for `/zh-hant/`（trailing slash）
+### 5. nginx 404 for `/zh-hant/` (trailing slash)
 
-**症狀**：`/zh-hant` 修好後，`/zh-hant/`（結尾斜線）仍回 404。
+**Symptom**: After fixing `/zh-hant`, `/zh-hant/` (with trailing slash) still returns 404.
 
-**原因**：`try_files $uri $uri.html $uri/` 對 `/zh-hant/` 會試 `/zh-hant/`、`/zh-hant/.html`（無效）、`/zh-hant/`（無 index），都失敗。
+**Cause**: `try_files $uri $uri.html $uri/` for `/zh-hant/` tries `/zh-hant/`, `/zh-hant/.html` (invalid), and `/zh-hant/` (no index); all fail.
 
-**解法**：加一條 regex location 把 trailing slash 導向同名 `.html`：
+**Fix**: Add a regex location to redirect trailing slashes to the `.html` of the same name:
 
 ```nginx
 location ~ ^/(.+)/$ {
@@ -223,20 +223,20 @@ location ~ ^/(.+)/$ {
 }
 ```
 
-### 6. `/zh-hant` 頁面無樣式（asset 404）
+### 6. `/zh-hant` page has no styles (asset 404)
 
-**症狀**：`/zh-hant` HTML 載入但 `_app/immutable/...` 的 CSS/JS 全 404，頁面無樣式。瀏覽器請求的是 `/zh-hant/_app/...` 而非 `/_app/...`。
+**Symptom**: The `/zh-hant` HTML loads but CSS/JS under `_app/immutable/...` all 404, leaving the page unstyled. The browser requests `/zh-hant/_app/...` instead of `/_app/...`.
 
-**原因**：`zh-hant.html` 的 asset 路徑是**相對**的（`./_app/...`）。訪問 `/zh-hant/`（trailing slash）時，瀏覽器把 `./_app/...` 解析成相對於 `/zh-hant/`，得到 `/zh-hant/_app/...`，但該路徑不存在（資產都在根 `_app/`）。
+**Cause**: Asset paths in `zh-hant.html` are **relative** (`./_app/...`). When visiting `/zh-hant/` (trailing slash), the browser resolves `./_app/...` relative to `/zh-hant/`, yielding `/zh-hant/_app/...`, which does not exist (assets live under the root `_app/`).
 
-**解法**：`svelte.config.js` 設 `kit.paths.relative = false`，讓 SvelteKit 產出 root-absolute asset 路徑（`/_app/...`），不再受頁面 URL 路徑影響。這也是 Paraglide SSG 文件針對 per-locale build 建議的設定。
+**Fix**: Set `kit.paths.relative = false` in `svelte.config.js` so SvelteKit emits root-absolute asset paths (`/_app/...`) that are not affected by the page URL path. This is also the setting Paraglide's SSG docs recommend for per-locale builds.
 
-## 相關檔案
+## Related files
 
-- [project.inlang/settings.json](../apps/svelte_projects/project.inlang/settings.json) — inlang project 設定
-- [messages/en.json](../apps/svelte_projects/messages/en.json) — 英文翻譯
-- [messages/zh-hant.json](../apps/svelte_projects/messages/zh-hant.json) — 繁體中文翻譯
+- [project.inlang/settings.json](../apps/svelte_projects/project.inlang/settings.json) — inlang project settings
+- [messages/en.json](../apps/svelte_projects/messages/en.json) — English translations
+- [messages/zh-hant.json](../apps/svelte_projects/messages/zh-hant.json) — Traditional Chinese translations
 - [entry/vite.config.ts](../apps/svelte_projects/entry/vite.config.ts) / [profile/vite.config.ts](../apps/svelte_projects/profile/vite.config.ts) — paraglide Vite plugin
-- [entry/Dockerfile](../apps/svelte_projects/entry/Dockerfile) / [profile/Dockerfile](../apps/svelte_projects/profile/Dockerfile) — Docker build（含 project.inlang + messages COPY + nginx config）
-- [shared/nginx/default.conf.template](../apps/svelte_projects/shared/nginx/default.conf.template) — nginx 站點設定（`.html` fallback + immutable caching）
-- [docs/cicd_github_actions.md](cicd_github_actions.md) — CI/CD 部署筆記
+- [entry/Dockerfile](../apps/svelte_projects/entry/Dockerfile) / [profile/Dockerfile](../apps/svelte_projects/profile/Dockerfile) — Docker build (includes project.inlang + messages COPY + nginx config)
+- [shared/nginx/default.conf.template](../apps/svelte_projects/shared/nginx/default.conf.template) — nginx site config (`.html` fallback + immutable caching)
+- [docs/cicd_github_actions.md](cicd_github_actions.md) — CI/CD deployment notes

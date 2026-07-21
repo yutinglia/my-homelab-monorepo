@@ -1,8 +1,8 @@
 # my-homelab-monorepo
 
-Self-hosted homelab 應用與 CI/CD monorepo。容器化部署，GitHub Actions self-hosted runner 自動 build + deploy。
+Self-hosted homelab applications and CI/CD monorepo. Containerized deployment, GitHub Actions self-hosted runner for automated build + deploy.
 
-> PVE 基礎設施配置（網路拓撲、防火牆規則、反向代理等）由獨立的 private repo 管理，不對外暴露。
+> PVE infrastructure configuration (network topology, firewall rules, reverse proxy, etc.) is managed in a separate private repo and is not exposed publicly.
 
 ## CI/CD
 
@@ -14,28 +14,28 @@ push to main (apps/**)
   → reverse proxy → Docker VM:<port>
 ```
 
-- Self-hosted runner 在 Docker Host VM 上
-- 每個 app 有自己的 Dockerfile，部署到 `~/services/<app>/`
-- 本地 build 本地跑，不需要外部 registry
-- 反向代理配置由手動管理，不納入 CI/CD
+- The self-hosted runner runs on the Docker Host VM
+- Each app has its own Dockerfile and is deployed to `~/services/<app>/`
+- Build and run locally; no external registry needed
+- Reverse proxy configuration is managed manually and is not part of CI/CD
 
-詳見 [CI/CD 筆記](docs/cicd_github_actions.md)。
+See [CI/CD notes](docs/cicd_github_actions.md).
 
-## 目錄結構
+## Directory structure
 
 ```
 my-homelab-monorepo/
-├── apps/                    ← 應用程式（各 app 獨立 Dockerfile）
-│   └── svelte_projects/     ← SvelteKit 靜態站台 (entry + profile + shared)
-├── docs/                    ← 開發與 CI/CD 文檔
+├── apps/                    ← Applications (each app has its own Dockerfile)
+│   └── svelte_projects/     ← SvelteKit static sites (entry + profile + shared)
+├── docs/                    ← Development and CI/CD documentation
 │   ├── cicd_github_actions.md
 │   └── paraglide_i18n.md
 └── .github/workflows/       ← GitHub Actions CI/CD
 ```
 
-未來新增 app：在 `apps/<app>/` 加 Dockerfile + workflow path filter + deploy step。
+To add a new app in the future: add a Dockerfile in `apps/<app>/`, a workflow path filter, and a deploy step.
 
-## 文檔
+## Documentation
 
-- [CI/CD 筆記](docs/cicd_github_actions.md) — GitHub Actions 部署設定
-- [Paraglide i18n](docs/paraglide_i18n.md) — SvelteKit 多語系設定
+- [CI/CD notes](docs/cicd_github_actions.md) — GitHub Actions deployment setup
+- [Paraglide i18n](docs/paraglide_i18n.md) — SvelteKit multilingual setup
