@@ -1,0 +1,12 @@
+{
+    "name": "@homelab/svelte-projects",
+    "private": true,
+    "scripts": {
+        "dev:entry": "pnpm --filter @homelab/entry dev",
+        "dev:profile": "pnpm --filter @homelab/profile dev",
+        "build:entry": "pnpm --filter @homelab/entry build",
+        "build:profile": "pnpm --filter @homelab/profile build",
+        "build": "pnpm --filter @homelab/entry build && pnpm --filter @homelab/profile build",
+        "check": "pnpm -r check"
+    }
+}

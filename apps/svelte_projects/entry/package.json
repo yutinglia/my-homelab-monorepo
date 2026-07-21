@@ -1,0 +1,32 @@
+{
+    "name": "@homelab/entry",
+    "version": "0.0.1",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "vite dev",
+        "build": "vite build",
+        "preview": "vite preview",
+        "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+    },
+    "dependencies": {
+        "@homelab/shared": "workspace:*",
+        "bits-ui": "catalog:",
+        "clsx": "catalog:",
+        "tailwind-merge": "catalog:",
+        "tailwind-variants": "catalog:"
+    },
+    "devDependencies": {
+        "@inlang/paraglide-js": "catalog:",
+        "@sveltejs/adapter-static": "catalog:",
+        "@sveltejs/kit": "catalog:",
+        "@sveltejs/vite-plugin-svelte": "catalog:",
+        "@tailwindcss/vite": "catalog:",
+        "@types/node": "catalog:",
+        "svelte": "catalog:",
+        "svelte-check": "catalog:",
+        "tailwindcss": "catalog:",
+        "typescript": "catalog:",
+        "vite": "catalog:"
+    }
+}

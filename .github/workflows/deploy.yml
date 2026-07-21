@@ -1,0 +1,36 @@
+name: Build & Deploy to Homelab
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/svelte_projects/**'
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    # Only allow deploys from the canonical repo, not forks
+    if: github.repository == 'yutinglia/my-homelab-monorepo'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build entry Docker image
+        working-directory: apps/svelte_projects
+        run: docker build -t homelab/entry:latest -f entry/Dockerfile .
+
+      - name: Build profile Docker image
+        working-directory: apps/svelte_projects
+        run: docker build -t homelab/profile:latest -f profile/Dockerfile .
+
+      - name: Deploy entry
+        run: |
+          cd ~/services/entry
+          docker compose up -d
+
+      - name: Deploy profile
+        run: |
+          cd ~/services/profile
+          docker compose up -d

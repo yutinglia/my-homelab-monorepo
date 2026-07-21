@@ -1,0 +1,29 @@
+server {
+    listen 8080;
+    server_name _;
+    root /usr/share/nginx/html;
+    index index.html;
+
+    # gzip
+    gzip on;
+    gzip_comp_level 5;
+    gzip_min_length 256;
+    gzip_types text/plain text/css application/javascript application/json image/svg+xml;
+    gzip_vary on;
+
+    # immutable caching for SvelteKit assets (includes per-locale paraglide graphs)
+    location /_app/immutable/ {
+        try_files $uri =404;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+
+    # extensionless route fallback: /zh-hant -> zh-hant.html
+    location / {
+        try_files $uri $uri.html $uri/ =404;
+    }
+
+    # trailing-slash variant: /zh-hant/ -> zh-hant.html
+    location ~ ^/(.+)/$ {
+        try_files $uri /$1.html =404;
+    }
+}
