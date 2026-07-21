@@ -122,7 +122,7 @@
                 {m.profile_name()}
             </h1>
             <p
-                class="mt-4 max-w-[62ch] font-sans text-[clamp(18px,1.8vw,26px)] leading-tight text-muted-foreground"
+                class="mt-4 max-w-[62ch] text-justify font-sans text-[clamp(18px,1.8vw,26px)] leading-tight text-muted-foreground"
             >
                 {m.profile_role()}
             </p>
@@ -138,7 +138,7 @@
                 {m.profile_currently_heading()}
             </h2>
             <p
-                class="m-0 max-w-[62ch] font-display text-[clamp(14px,1.3vw,17px)] leading-normal tracking-[0.02em] text-muted-foreground"
+                class="m-0 max-w-[62ch] text-justify font-display text-[clamp(14px,1.3vw,17px)] leading-normal tracking-[0.02em] text-muted-foreground"
             >
                 {m.profile_currently_body()}
             </p>
@@ -149,17 +149,17 @@
                 {m.profile_about_heading()}
             </h2>
             <p
-                class="mb-4 max-w-[62ch] font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
+                class="mb-4 max-w-[62ch] text-justify font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
             >
                 {m.profile_about_p1()}
             </p>
             <p
-                class="mb-4 max-w-[62ch] font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
+                class="mb-4 max-w-[62ch] text-justify font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
             >
                 {m.profile_about_p2()}
             </p>
             <p
-                class="mb-4 max-w-[62ch] font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
+                class="mb-4 max-w-[62ch] text-justify font-sans text-[17px] leading-relaxed text-muted-foreground last:mb-0"
             >
                 {m.profile_about_p3()}
             </p>
