@@ -23,7 +23,7 @@
         },
         {
             group: m.profile_stack_group_languages(),
-            items: ["Go", "Python", "TypeScript", "Rust", "C++"],
+            items: ["Go", "Python", "TypeScript", "Rust", "C++", "Java"],
         },
         {
             group: m.profile_stack_group_backend(),
@@ -31,7 +31,7 @@
         },
         {
             group: m.profile_stack_group_frontend(),
-            items: ["React", "Svelte", "Vue", "Next.js", "TanStack"],
+            items: ["React", "Svelte", "Vue", "Next.js", "TanStack", "HTML/CSS", "Tailwind CSS"],
         },
         {
             group: m.profile_stack_group_ai_agents(),
@@ -178,7 +178,7 @@
                         >
                         {#each group.items as item}
                             <span
-                                class="border border-border-strong px-2.5 py-[5px] font-display text-[11px] uppercase tracking-[0.12em] text-foreground transition-[border-color,color] duration-200 ease-quick touch-manipulation hover:border-border-strong hover:text-dim-foreground motion-reduce:transition-none"
+                                class="border border-border-strong px-2.5 py-[5px] font-display text-[11px] tracking-[0.12em] text-foreground transition-[border-color,color] duration-200 ease-quick touch-manipulation hover:border-border-strong hover:text-dim-foreground motion-reduce:transition-none"
                                 >{item}</span
                             >
                         {/each}
