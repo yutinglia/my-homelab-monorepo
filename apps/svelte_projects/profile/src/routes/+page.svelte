@@ -122,12 +122,12 @@
                 {m.profile_name()}
             </h1>
             <p
-                class="mt-4 font-sans text-[clamp(18px,1.8vw,26px)] leading-tight text-muted-foreground"
+                class="mt-4 max-w-[62ch] font-sans text-[clamp(18px,1.8vw,26px)] leading-tight text-muted-foreground"
             >
                 {m.profile_role()}
             </p>
             <p
-                class="mt-3.5 font-display text-xs uppercase tracking-[0.14em] text-dim-foreground"
+                class="mt-3.5 max-w-[62ch] font-display text-xs uppercase tracking-[0.14em] text-dim-foreground"
             >
                 {m.profile_location()}
             </p>
@@ -138,7 +138,7 @@
                 {m.profile_currently_heading()}
             </h2>
             <p
-                class="m-0 font-display text-[clamp(14px,1.3vw,17px)] leading-normal tracking-[0.02em] text-muted-foreground"
+                class="m-0 max-w-[62ch] font-display text-[clamp(14px,1.3vw,17px)] leading-normal tracking-[0.02em] text-muted-foreground"
             >
                 {m.profile_currently_body()}
             </p>

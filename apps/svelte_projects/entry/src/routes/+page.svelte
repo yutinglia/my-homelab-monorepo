@@ -65,7 +65,7 @@
         <section class="mt-[8vh] max-sm:mt-[6vh]">
             <p class="mb-3.5 font-display text-xs uppercase tracking-[0.24em] text-dim-foreground">{m.entry_label()}</p>
             <h1 class="m-0 font-display text-[clamp(64px,11vw,156px)] font-light leading-[0.92] tracking-[-0.03em] text-balance">{m.entry_name()}</h1>
-            <p class="mt-4 max-w-[52ch] font-sans text-[clamp(15px,1.4vw,18px)] leading-normal text-muted-foreground">
+            <p class="mt-4 max-w-[62ch] font-sans text-[clamp(15px,1.4vw,18px)] leading-normal text-muted-foreground">
                 {m.entry_tagline()}
             </p>
         </section>
