@@ -16,6 +16,8 @@ RUN pnpm --filter @homelab/entry build
 
 # Stage 2: Serve (non-root)
 FROM nginxinc/nginx-unprivileged:alpine
+USER root
+RUN rm -f /usr/share/nginx/html/index.html /usr/share/nginx/html/50x.html
 COPY --from=builder /build/entry/build /usr/share/nginx/html
 COPY shared/nginx/default.conf.template /etc/nginx/conf.d/default.conf
 EXPOSE 8080

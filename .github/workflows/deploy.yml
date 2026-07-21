@@ -25,6 +25,15 @@ jobs:
         working-directory: apps/svelte_projects
         run: docker build -t homelab/profile:latest -f profile/Dockerfile .
 
+      - name: Verify build artifacts
+        run: |
+          for app in entry profile; do
+            html="/usr/share/nginx/html/index.html"
+            docker run --rm homelab/$app:latest sh -c "test -f $html && head -1 $html | grep -q '<!doctype html>'" \
+              || { echo "::error::$app image missing or invalid index.html"; exit 1; }
+            echo "✓ $app index.html OK"
+          done
+
       - name: Deploy entry
         run: |
           cd ~/services/entry
