@@ -1,0 +1,84 @@
+name: Dependabot auto-merge
+
+on:
+  pull_request_target:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Approve eligible updates and enable auto-merge
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    if: >-
+      github.repository == 'yutinglia/my-homelab-monorepo' &&
+      github.event.pull_request.user.login == 'dependabot[bot]' &&
+      github.event.pull_request.base.ref == 'main' &&
+      github.event.pull_request.draft == false
+
+    steps:
+      # This workflow intentionally does not check out or execute pull request code.
+      - name: Fetch verified Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@25dd0e34f4fe68f24cc83900b1fe3fe149efef98 # v3.1.0
+        with:
+          github-token: ${{ github.token }}
+
+      - name: Evaluate update policy
+        id: policy
+        env:
+          DEPENDENCY_GROUP: ${{ steps.metadata.outputs.dependency-group }}
+          UPDATE_TYPE: ${{ steps.metadata.outputs.update-type }}
+        run: |
+          eligible=false
+          reason="manual review required"
+
+          if [[ "$DEPENDENCY_GROUP" == "security-updates" ]]; then
+            eligible=true
+            reason="security update"
+          elif [[ "$UPDATE_TYPE" == "version-update:semver-patch" ]]; then
+            eligible=true
+            reason="patch update"
+          elif [[ "$UPDATE_TYPE" == "version-update:semver-minor" ]]; then
+            eligible=true
+            reason="minor update"
+          fi
+
+          echo "eligible=$eligible" >> "$GITHUB_OUTPUT"
+          echo "Dependabot policy: $reason"
+
+      - name: Approve eligible update
+        if: steps.policy.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          review_decision="$(gh pr view "$PR_URL" --json reviewDecision --jq .reviewDecision)"
+          if [[ "$review_decision" == "APPROVED" ]]; then
+            echo "Pull request is already approved."
+          else
+            gh pr review --approve "$PR_URL"
+          fi
+
+      - name: Enable squash auto-merge for eligible update
+        if: steps.policy.outputs.eligible == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          auto_merge_enabled="$(
+            gh pr view "$PR_URL" --json autoMergeRequest \
+              --jq '.autoMergeRequest != null'
+          )"
+          if [[ "$auto_merge_enabled" == "true" ]]; then
+            echo "Auto-merge is already enabled."
+          else
+            gh pr merge --auto --squash "$PR_URL"
+          fi

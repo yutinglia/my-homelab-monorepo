@@ -1,0 +1,52 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /apps/svelte_projects
+    schedule:
+      interval: weekly
+      day: monday
+      time: "04:00"
+      timezone: Asia/Taipei
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: deps
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "05:00"
+      timezone: Asia/Taipei
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: ci
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
+
+  - package-ecosystem: docker
+    directories:
+      - /apps/svelte_projects/entry
+      - /apps/svelte_projects/profile
+    schedule:
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: Asia/Taipei
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: deps
+    groups:
+      security-updates:
+        applies-to: security-updates
+        patterns:
+          - "*"
