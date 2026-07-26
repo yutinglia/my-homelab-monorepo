@@ -10,30 +10,29 @@
     interface Props {
         current: string;
         options: LocaleOption[];
+        ariaLabel?: string;
         class?: string;
     }
 
-    let { current, options, class: className = "" }: Props = $props();
+    let {
+        current,
+        options,
+        ariaLabel = "Languages",
+        class: className = "",
+    }: Props = $props();
 </script>
 
 <nav
     class={cn(
-        "inline-flex items-center gap-3 font-display text-[clamp(11px,1vw,13px)] uppercase tracking-[0.18em]",
+        "locale-switcher",
         className
     )}
-    aria-label="Languages"
+    aria-label={ariaLabel}
 >
-    {#each options as opt, i}
-        {#if i > 0}
-            <span class="text-meta-foreground" aria-hidden="true">·</span>
-        {/if}
+    {#each options as opt}
         <a
             class={cn(
-                "no-underline transition-colors duration-150 ease-quick touch-manipulation motion-reduce:transition-none",
-                "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-focus-ring",
-                opt.locale === current
-                    ? "text-foreground"
-                    : "text-dim-foreground hover:text-foreground"
+                "locale-switcher-link",
             )}
             href={opt.href}
             data-sveltekit-reload

@@ -1,4 +1,6 @@
 <script lang="ts">
+    import { onMount } from "svelte";
+
     interface Props {
         veilVariant?: "default" | "soft";
     }
@@ -8,10 +10,10 @@
     let canvas: HTMLCanvasElement;
     let fallback: HTMLDivElement;
 
-    function init() {
+    onMount(() => {
         const gl = canvas.getContext("webgl2", { antialias: true });
         if (!gl) {
-            fallback.style.display = "flex";
+            fallback.style.display = "block";
             canvas.style.display = "none";
             return;
         }
@@ -81,9 +83,9 @@ void main(){
         let mouse = [0.5, 0.5];
         let target = [0.5, 0.5];
 
-        addEventListener("pointermove", (e) => {
+        const onPointerMove = (e: PointerEvent) => {
             target = [e.clientX / innerWidth, 1.0 - e.clientY / innerHeight];
-        });
+        };
 
         function resize() {
             const d = Math.min(devicePixelRatio || 1, 2);
@@ -95,12 +97,14 @@ void main(){
             gl!.viewport(0, 0, w, h);
         }
 
-        addEventListener("resize", resize);
+        addEventListener("pointermove", onPointerMove, { passive: true });
+        addEventListener("resize", resize, { passive: true });
         resize();
 
         const t0 = performance.now();
         const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
         let frozenTime = 0;
+        let frameId = 0;
 
         function frame(now: number) {
             resize();
@@ -117,18 +121,19 @@ void main(){
             gl!.uniform1f(uTime, tNow);
             gl!.uniform2f(uMouse, mouse[0], mouse[1]);
             gl!.drawArrays(gl!.TRIANGLES, 0, 3);
-            requestAnimationFrame(frame);
+            frameId = requestAnimationFrame(frame);
         }
-        requestAnimationFrame(frame);
-    }
+        frameId = requestAnimationFrame(frame);
 
-    $effect(() => {
-        init();
+        return () => {
+            cancelAnimationFrame(frameId);
+            removeEventListener("pointermove", onPointerMove);
+            removeEventListener("resize", resize);
+            gl.deleteProgram(pr);
+        };
     });
 </script>
 
 <canvas class="av-canvas" bind:this={canvas} aria-hidden="true"></canvas>
 <div class={veilVariant === "soft" ? "av-veil-soft" : "av-veil"} aria-hidden="true"></div>
-<div class="av-fallback" bind:this={fallback} role="alert">
-    <p>WebGL2 not available. This experience needs a WebGL2-capable browser.</p>
-</div>
+<div class="av-static-background" bind:this={fallback} aria-hidden="true"></div>

@@ -4,3 +4,20 @@
 **/.svelte-kit/**
 **/build
 **/build/**
+
+# Local secrets and machine-specific context must never enter this public repo.
+**/.env
+**/.env.*
+!**/.env.example
+!**/.env.*.example
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/id_rsa
+**/id_ed25519
+**/credentials.json
+**/*service-account*.json
+**/secrets.*
+.codex/local-context.md

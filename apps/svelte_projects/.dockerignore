@@ -1,0 +1,17 @@
+**/node_modules
+**/.svelte-kit
+**/build
+**/.env
+**/.env.*
+**/*.local
+**/*.key
+**/*.pem
+**/*.p12
+**/*.pfx
+**/*.jks
+**/id_rsa
+**/id_ed25519
+**/credentials.json
+**/*service-account*.json
+**/secrets.*
+**/.codex

@@ -29,7 +29,8 @@ GitHub Actions (self-hosted runner on Docker VM)
 ```
 .github/
 └── workflows/
-    └── deploy.yml        # Self-hosted runner workflow
+    ├── deploy.yml        # Main-only self-hosted deployment
+    └── security.yml      # Public-repo secret scan on every push
 ```
 
 ---
@@ -71,6 +72,11 @@ systemctl status actions.runner.*
 
 - Push to the `main` branch with changes under `apps/svelte_projects/**`
 - Or manual trigger (`workflow_dispatch`)
+- `security.yml` separately scans every push; it has no pull request or issue trigger
+
+Before a deployment builds an image, CI scans the checked-out worktree and all
+reachable Git history. The scanner only prints a file path and detector category,
+never the matching value.
 
 ### 3. Deployment process
 

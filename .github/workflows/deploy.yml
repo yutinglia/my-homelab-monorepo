@@ -5,17 +5,40 @@ on:
     branches: [main]
     paths:
       - 'apps/svelte_projects/**'
+      - 'scripts/check-secrets.mjs'
+      - '.github/workflows/deploy.yml'
   workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: homelab-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: self-hosted
+    timeout-minutes: 20
     # Only allow deploys from the canonical repo, not forks
-    if: github.repository == 'yutinglia/my-homelab-monorepo'
+    if: >-
+      github.repository == 'yutinglia/my-homelab-monorepo' &&
+      github.ref == 'refs/heads/main'
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Scan worktree and Git history
+        run: node scripts/check-secrets.mjs --self-test --history
 
       - name: Build entry Docker image
         working-directory: apps/svelte_projects

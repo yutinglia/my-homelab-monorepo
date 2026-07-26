@@ -21,6 +21,19 @@ push to main (apps/**)
 
 See [CI/CD notes](docs/cicd_github_actions.md).
 
+## Public repository security
+
+This repository contains no production credentials or private infrastructure
+configuration. Before committing, scan both the worktree and every reachable Git
+history blob:
+
+```bash
+node scripts/check-secrets.mjs --self-test --history
+```
+
+The same value-redacting scan runs on every push and before production deploys.
+See [AGENTS.md](AGENTS.md) for the repository's security and contribution rules.
+
 ## Directory structure
 
 ```
