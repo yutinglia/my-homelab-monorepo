@@ -237,8 +237,8 @@
                     <img
                         src={`${base}/projects/setlist-og.png`}
                         alt="Setlist — VTuber Karaoke Search"
-                        width="1536"
-                        height="1024"
+                        width="1731"
+                        height="909"
                     />
                     <span class="status-pill">
                         <span class="status-dot" aria-hidden="true"></span>
@@ -251,7 +251,6 @@
                             <span>{m.project_setlist_kicker()}</span>
                             <h3>{m.project_setlist_title()}</h3>
                         </div>
-                        <code>{m.project_setlist_version()}</code>
                     </div>
                     <p>{m.project_setlist_description()}</p>
 
@@ -600,27 +599,11 @@
         padding: clamp(32px, 5vw, 64px);
     }
 
-    .portfolio-title-row {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: 18px;
-    }
-
     .portfolio-title-row h3 {
         margin: 14px 0 0;
         font-size: clamp(42px, 5vw, 64px);
         font-weight: 520;
         letter-spacing: -0.055em;
-    }
-
-    .portfolio-title-row > code {
-        padding: 7px 9px;
-        border: 1px solid var(--color-border);
-        border-radius: 8px;
-        color: var(--color-dim-foreground);
-        font-family: var(--font-display);
-        font-size: 9px;
     }
 
     .portfolio-body > p {
