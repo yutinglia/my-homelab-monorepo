@@ -12,7 +12,14 @@ updates:
     commit-message:
       prefix: deps
     groups:
-      security-updates:
+      automerge-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      automerge-security:
         applies-to: security-updates
         patterns:
           - "*"
@@ -28,7 +35,14 @@ updates:
     commit-message:
       prefix: ci
     groups:
-      security-updates:
+      automerge-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      automerge-security:
         applies-to: security-updates
         patterns:
           - "*"
@@ -46,7 +60,14 @@ updates:
     commit-message:
       prefix: deps
     groups:
-      security-updates:
+      automerge-minor-patch:
+        applies-to: version-updates
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+      automerge-security:
         applies-to: security-updates
         patterns:
           - "*"
