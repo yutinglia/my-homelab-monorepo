@@ -8,6 +8,10 @@ updates:
       day: monday
       time: "04:00"
       timezone: Asia/Taipei
+    # Keep routine updates older than pnpm's 24-hour supply-chain quarantine.
+    # Security updates are not delayed by Dependabot cooldowns.
+    cooldown:
+      default-days: 3
     open-pull-requests-limit: 10
     commit-message:
       prefix: deps
