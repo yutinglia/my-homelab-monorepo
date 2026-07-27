@@ -102,15 +102,14 @@
                 <img
                     src={`${base}/projects/setlist-og.png`}
                     alt="Setlist — VTuber Karaoke Search"
-                    width="1536"
-                    height="1024"
+                    width="1731"
+                    height="909"
                 />
                 <div class="project-media-meta">
                     <span class="status-pill">
                         <span class="status-dot" aria-hidden="true"></span>
                         {m.project_live()}
                     </span>
-                    <span>{m.project_setlist_version()}</span>
                 </div>
             </div>
 
@@ -285,15 +284,7 @@
         left: 22px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
         gap: 16px;
-    }
-
-    .project-media-meta > span:last-child {
-        color: var(--color-muted-foreground);
-        font-family: var(--font-display);
-        font-size: 10px;
-        letter-spacing: 0.12em;
     }
 
     .project-body {

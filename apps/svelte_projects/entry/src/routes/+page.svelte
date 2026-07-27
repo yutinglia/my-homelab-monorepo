@@ -150,8 +150,8 @@
                     <img
                         src={`${base}/projects/setlist-og.png`}
                         alt=""
-                        width="1536"
-                        height="1024"
+                        width="1731"
+                        height="909"
                     />
                     <span class="status-pill featured-status">
                         <span class="status-dot" aria-hidden="true"></span>
