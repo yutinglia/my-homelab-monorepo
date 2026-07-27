@@ -12,6 +12,12 @@ updates:
     # Security updates are not delayed by Dependabot cooldowns.
     cooldown:
       default-days: 3
+    # TypeScript 7 does not yet provide the stable programmatic API required
+    # by Svelte tooling. Keep receiving TypeScript 6 updates until that changes.
+    ignore:
+      - dependency-name: typescript
+        versions:
+          - ">=7"
     open-pull-requests-limit: 10
     commit-message:
       prefix: deps

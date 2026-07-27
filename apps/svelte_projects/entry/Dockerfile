@@ -1,6 +1,6 @@
 # Stage 1: Build
 FROM node:22-alpine AS builder
-RUN corepack enable && corepack prepare pnpm@11.15.1 --activate
+RUN npm install --global pnpm@11.15.1
 
 WORKDIR /build
 COPY pnpm-workspace.yaml pnpm-lock.yaml .npmrc ./
