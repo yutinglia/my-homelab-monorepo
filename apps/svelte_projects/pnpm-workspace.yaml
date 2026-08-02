@@ -3,6 +3,12 @@ packages:
   - entry
   - profile
 
+# Make pnpm enforce its 24-hour supply-chain quarantine during both fresh
+# resolution and lockfile verification. This prevents Dependabot-generated
+# lockfiles from admitting a newer transitive release than the reviewed update.
+minimumReleaseAge: 1440
+minimumReleaseAgeStrict: true
+
 catalog:
   # Runtime deps
   bits-ui: ^2.0.0
