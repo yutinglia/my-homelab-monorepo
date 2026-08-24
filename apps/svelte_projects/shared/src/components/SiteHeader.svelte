@@ -22,6 +22,7 @@
         currentLocale: string;
         localeOptions: LocaleOption[];
         localeAriaLabel?: string;
+        navAriaLabel?: string;
     }
 
     let {
@@ -32,19 +33,18 @@
         currentLocale,
         localeOptions,
         localeAriaLabel = "Languages",
+        navAriaLabel = "Primary",
     }: Props = $props();
 </script>
 
 <header class="site-header">
     <a class="site-brand" href={brandHref} aria-label={`${brandName} ${brandSubtitle}`}>
-        <span class="site-brand-mark" aria-hidden="true">T/</span>
-        <span class="site-brand-copy">
-            <span class="site-brand-name">{brandName}</span>
-            <span class="site-brand-subtitle">{brandSubtitle}</span>
-        </span>
+        <span class="site-brand-name">{brandName}</span>
+        <span class="site-brand-divider" aria-hidden="true">/</span>
+        <span class="site-brand-subtitle">{brandSubtitle}</span>
     </a>
 
-    <nav class="site-nav" aria-label="Primary">
+    <nav class="site-nav" aria-label={navAriaLabel}>
         {#each navItems as item}
             <a
                 class="site-nav-link"
