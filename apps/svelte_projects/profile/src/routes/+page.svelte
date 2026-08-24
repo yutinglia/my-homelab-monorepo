@@ -31,6 +31,10 @@
             kicker: m.project_setlist_kicker(),
             status: m.project_live(),
             description: m.project_setlist_description(),
+            image: `${base}/projects/setlist-og.png`,
+            alt: m.project_setlist_alt(),
+            width: 1731,
+            height: 909,
             technologies: ["React", "FastAPI", "PostgreSQL", "Docker"],
             links: [
                 {
@@ -52,6 +56,10 @@
             kicker: m.project_fennevia_kicker(),
             status: m.project_fennevia_status(),
             description: m.project_fennevia_description(),
+            image: `${base}/projects/fennevia-overview.svg`,
+            alt: m.project_fennevia_alt(),
+            width: 1600,
+            height: 900,
             technologies: ["JavaScript", "TypeScript", "Svelte", "PowerShell"],
             links: [
                 {
@@ -68,6 +76,10 @@
             kicker: m.project_dial_kicker(),
             status: m.project_dial_status(),
             description: m.project_dial_description(),
+            image: `${base}/projects/dial-canvas-overview.svg`,
+            alt: m.project_dial_alt(),
+            width: 1600,
+            height: 900,
             technologies: ["Svelte 5", "TypeScript", "WXT", "WebExtension"],
             links: [
                 {
@@ -254,49 +266,16 @@
                         data-reveal
                         style={`--reveal-delay: ${index * 70}ms`}
                     >
-                        {#if project.slug === "setlist"}
-                            <div class="project-visual setlist-visual">
-                                <img
-                                    src={`${base}/projects/setlist-og.png`}
-                                    alt={m.project_setlist_alt()}
-                                    width="1731"
-                                    height="909"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </div>
-                        {:else if project.slug === "fennevia"}
-                            <div class="project-visual fennevia-visual" aria-hidden="true">
-                                <div class="fennevia-browser">
-                                    <div class="fennevia-page">
-                                        <span></span>
-                                        <span></span>
-                                        <span></span>
-                                        <strong>Fennevia</strong>
-                                    </div>
-                                    <div class="fennevia-edge fennevia-edge-top">
-                                        <i></i><i></i><i></i>
-                                    </div>
-                                    <div class="fennevia-edge fennevia-edge-left">
-                                        <i></i><i></i><i></i><i></i>
-                                    </div>
-                                    <div class="fennevia-edge fennevia-edge-right">
-                                        <i></i><i></i><i></i>
-                                    </div>
-                                    <div class="fennevia-edge fennevia-edge-bottom"></div>
-                                </div>
-                                <span class="visual-coordinate">04 / edge interface</span>
-                            </div>
-                        {:else}
-                            <div class="project-visual dial-visual" aria-hidden="true">
-                                <div class="dial-canvas-mark">DIAL<br />CANVAS</div>
-                                <span class="dial-tile dial-tile-a"></span>
-                                <span class="dial-tile dial-tile-b"></span>
-                                <span class="dial-tile dial-tile-c"></span>
-                                <span class="dial-tile dial-tile-d"></span>
-                                <span class="dial-cursor"></span>
-                            </div>
-                        {/if}
+                        <div class="project-visual">
+                            <img
+                                src={project.image}
+                                alt={project.alt}
+                                width={project.width}
+                                height={project.height}
+                                loading="lazy"
+                                decoding="async"
+                            />
+                        </div>
 
                         <div class="project-copy">
                             <div class="project-meta">
@@ -864,276 +843,50 @@
 
     .project-setlist {
         grid-column: 1 / -1;
-        display: grid;
-        grid-template-columns: minmax(0, 1.24fr) minmax(390px, 0.76fr);
-        min-height: 610px;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
     }
 
     .project-fennevia {
-        --project-accent: var(--site-coral);
+        --project-accent: var(--site-blue);
         grid-column: 1 / 8;
     }
 
     .project-dial {
-        --project-accent: var(--site-blue);
+        --project-accent: var(--site-coral);
         grid-column: 8 / -1;
     }
 
     .project-visual {
         position: relative;
-        min-height: 370px;
+        min-height: 0;
         overflow: hidden;
+        aspect-ratio: 16 / 9;
         border-bottom: 1px solid var(--site-line);
+        background: #0b0c0e;
     }
 
-    .setlist-visual {
-        display: grid;
-        place-items: center;
-        min-height: 610px;
-        padding: clamp(24px, 4vw, 58px);
-        border-right: 1px solid var(--site-line);
-        border-bottom: 0;
-        background:
-            radial-gradient(circle at 20% 20%, rgba(123, 71, 255, 0.22), transparent 36%),
-            radial-gradient(circle at 82% 72%, rgba(79, 235, 205, 0.12), transparent 34%),
-            #101120;
-    }
-
-    .setlist-visual::after {
+    .project-visual::after {
         position: absolute;
         inset: 0;
-        background:
-            linear-gradient(90deg, transparent 60%, rgba(6, 9, 11, 0.2)),
-            linear-gradient(180deg, transparent 68%, rgba(4, 6, 7, 0.38));
+        background: linear-gradient(145deg, transparent 50%, rgba(0, 0, 0, 0.3));
         content: "";
         pointer-events: none;
     }
 
-    .setlist-visual img {
-        position: relative;
-        z-index: 1;
+    .project-visual img {
         width: 100%;
-        height: auto;
-        max-height: 100%;
-        border: 1px solid rgba(255, 255, 255, 0.14);
-        border-radius: 18px;
-        box-shadow: 0 28px 72px rgba(0, 0, 0, 0.36);
-        object-fit: contain;
-        transition: transform 600ms var(--site-ease);
-    }
-
-    .project-setlist:hover .setlist-visual img {
-        transform: scale(1.018);
-    }
-
-    .fennevia-visual {
-        display: grid;
-        place-items: center;
-        background:
-            radial-gradient(circle at 25% 15%, rgba(255, 145, 126, 0.18), transparent 34%),
-            linear-gradient(145deg, #171316, #090d0f 72%);
-    }
-
-    .fennevia-browser {
-        position: relative;
-        width: min(76%, 520px);
-        aspect-ratio: 16 / 10;
-        border: 1px solid rgba(255, 255, 255, 0.24);
-        border-radius: 14px;
-        background: #e7e4dc;
-        box-shadow: 0 36px 80px rgba(0, 0, 0, 0.36);
-    }
-
-    .fennevia-page {
-        display: flex;
         height: 100%;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
-        gap: 10px;
-        color: #111416;
+        object-fit: cover;
+        transition:
+            filter 420ms var(--site-ease),
+            transform 420ms var(--site-ease);
     }
 
-    .fennevia-page strong {
-        margin-top: 12px;
-        font-family: var(--font-display);
-        font-size: clamp(18px, 2.7vw, 38px);
-        letter-spacing: -0.06em;
-        text-transform: uppercase;
-    }
-
-    .fennevia-page > span {
-        width: 48%;
-        height: 5px;
-        border-radius: 999px;
-        background: rgba(17, 20, 22, 0.16);
-    }
-
-    .fennevia-page > span:nth-child(2) {
-        width: 34%;
-    }
-
-    .fennevia-page > span:nth-child(3) {
-        width: 40%;
-    }
-
-    .fennevia-edge {
-        position: absolute;
-        display: flex;
-        gap: 5px;
-        padding: 6px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 8px;
-        background: rgba(12, 15, 17, 0.92);
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.34);
-    }
-
-    .fennevia-edge i {
-        display: block;
-        width: 8px;
-        height: 8px;
-        border-radius: 3px;
-        background: rgba(255, 255, 255, 0.56);
-    }
-
-    .fennevia-edge-top {
-        top: 7px;
-        left: 50%;
-        transform: translateX(-50%);
-    }
-
-    .fennevia-edge-left,
-    .fennevia-edge-right {
-        top: 50%;
-        flex-direction: column;
-        transform: translateY(-50%);
-    }
-
-    .fennevia-edge-left {
-        left: 7px;
-    }
-
-    .fennevia-edge-right {
-        right: 7px;
-    }
-
-    .fennevia-edge-bottom {
-        bottom: 7px;
-        left: 50%;
-        width: 24%;
-        height: 5px;
-        padding: 0;
-        border: 0;
-        border-radius: 999px;
-        background: var(--site-coral);
-        transform: translateX(-50%);
-    }
-
-    .visual-coordinate {
-        position: absolute;
-        right: 18px;
-        bottom: 16px;
-        color: rgba(255, 255, 255, 0.44);
-        font-family: var(--font-display);
-        font-size: 9px;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
-    }
-
-    .dial-visual {
-        background-color: #0d1317;
-        background-image:
-            linear-gradient(rgba(139, 200, 255, 0.12) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(139, 200, 255, 0.12) 1px, transparent 1px);
-        background-size: 28px 28px;
-    }
-
-    .dial-visual::after {
-        position: absolute;
-        inset: 0;
-        background: radial-gradient(circle at 50% 46%, transparent 22%, rgba(4, 7, 9, 0.7) 92%);
-        content: "";
-        pointer-events: none;
-    }
-
-    .dial-canvas-mark {
-        position: absolute;
-        z-index: 2;
-        top: 26px;
-        left: 28px;
-        color: var(--site-blue);
-        font-family: var(--font-display);
-        font-size: clamp(26px, 4vw, 48px);
-        font-weight: 500;
-        line-height: 0.9;
-        letter-spacing: -0.08em;
-    }
-
-    .dial-tile {
-        position: absolute;
-        z-index: 2;
-        border: 1px solid rgba(139, 200, 255, 0.5);
-        border-radius: 14px;
-        background: rgba(139, 200, 255, 0.13);
-        box-shadow: inset 0 1px rgba(255, 255, 255, 0.12);
-    }
-
-    .dial-tile::before {
-        position: absolute;
-        top: 12px;
-        left: 12px;
-        width: 9px;
-        height: 9px;
-        border-radius: 3px;
-        background: var(--site-blue);
-        content: "";
-    }
-
-    .dial-tile-a {
-        top: 25%;
-        right: 9%;
-        width: 31%;
-        height: 29%;
-    }
-
-    .dial-tile-b {
-        right: 35%;
-        bottom: 11%;
-        width: 23%;
-        height: 22%;
-    }
-
-    .dial-tile-c {
-        right: 6%;
-        bottom: 8%;
-        width: 24%;
-        height: 31%;
-    }
-
-    .dial-tile-d {
-        bottom: 14%;
-        left: 8%;
-        width: 21%;
-        height: 19%;
-        border-color: rgba(201, 255, 114, 0.48);
-        background: rgba(201, 255, 114, 0.11);
-    }
-
-    .dial-tile-d::before {
-        background: var(--site-signal);
-    }
-
-    .dial-cursor {
-        position: absolute;
-        z-index: 4;
-        right: 30%;
-        bottom: 27%;
-        width: 18px;
-        height: 24px;
-        background: var(--site-paper);
-        clip-path: polygon(0 0, 100% 70%, 57% 72%, 43% 100%);
-        filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.35));
-        transform: rotate(-12deg);
+    .project-card:hover .project-visual img {
+        filter: saturate(1.08);
+        transform: scale(1.018);
     }
 
     .project-copy {
@@ -1572,10 +1325,6 @@
             max-width: 620px;
         }
 
-        .project-setlist {
-            grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
-        }
-
         .project-fennevia {
             grid-column: 1 / 7;
         }
@@ -1637,24 +1386,13 @@
             max-width: 620px;
         }
 
-        .project-setlist {
-            grid-template-columns: 1fr;
-        }
-
-        .setlist-visual {
-            min-height: auto;
-            aspect-ratio: 16 / 9;
-            border-right: 0;
-            border-bottom: 1px solid var(--site-line);
-        }
-
         .project-fennevia,
         .project-dial {
             grid-column: 1 / -1;
         }
 
         .project-visual {
-            min-height: 420px;
+            min-height: 0;
         }
 
         .about-heading {
@@ -1769,13 +1507,7 @@
         }
 
         .project-visual {
-            min-height: 300px;
-        }
-
-        .setlist-visual {
-            min-height: 260px;
-            padding: 16px;
-            aspect-ratio: auto;
+            min-height: 0;
         }
 
         .project-copy {
@@ -1803,10 +1535,6 @@
 
         .project-link {
             width: 100%;
-        }
-
-        .fennevia-browser {
-            width: 84%;
         }
 
         .about-section {
@@ -1886,6 +1614,7 @@
 
     @media (prefers-reduced-motion: reduce) {
         .project-card:hover,
+        .project-card:hover .project-visual img,
         .cta:hover {
             transform: none;
         }
