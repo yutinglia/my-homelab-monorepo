@@ -11,7 +11,6 @@ export default defineConfig({
             project: '../project.inlang',
             outdir: './src/lib/paraglide',
             emitTsDeclarations: true,
-            experimentalPerLocaleBuild: true,
             strategy: ['url', 'cookie', 'baseLocale']
         })
     ]
