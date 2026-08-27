@@ -41,16 +41,6 @@
 
     const sideProjects = $derived([
         {
-            index: "02",
-            title: m.project_fennevia_title(),
-            kicker: m.project_fennevia_kicker(),
-            description: m.entry_project_fennevia_short(),
-            image: `${base}/projects/fennevia-overview.svg`,
-            alt: m.project_fennevia_alt(),
-            href: "https://github.com/yutinglia/fennevia",
-            accent: "#8bc8ff",
-        },
-        {
             index: "03",
             title: m.project_dial_title(),
             kicker: m.project_dial_kicker(),
@@ -177,9 +167,9 @@
             </header>
 
             <div class="work-grid">
-                <article class="setlist-card glass-panel" data-reveal>
+                <article class="featured-card glass-panel" data-reveal>
                     <a
-                        class="setlist-media"
+                        class="featured-media"
                         href="https://setlist.yutinglia.com"
                         target="_blank"
                         rel="noopener noreferrer"
@@ -193,7 +183,7 @@
                         />
                         <span class="media-number" aria-hidden="true">01</span>
                     </a>
-                    <div class="setlist-copy">
+                    <div class="featured-copy">
                         <div class="project-meta">
                             <span>{m.project_setlist_kicker()}</span>
                             <span class="status-pill">
@@ -221,6 +211,56 @@
                     </div>
                 </article>
 
+                <article
+                    class="featured-card fennevia-card glass-panel"
+                    data-reveal
+                    style="--reveal-delay: 70ms"
+                >
+                    <a
+                        class="featured-media"
+                        href="https://github.com/yutinglia/fennevia"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={m.project_fennevia_github()}
+                    >
+                        <img
+                            src={`${base}/projects/fennevia-customize-hero.png`}
+                            alt={m.project_fennevia_alt()}
+                            width="1672"
+                            height="941"
+                            loading="lazy"
+                            decoding="async"
+                        />
+                        <span class="media-number" aria-hidden="true">02</span>
+                    </a>
+                    <div class="featured-copy">
+                        <div class="project-meta">
+                            <span>{m.project_fennevia_kicker()}</span>
+                            <span class="status-pill">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                {m.project_fennevia_status()}
+                            </span>
+                        </div>
+                        <h3>{m.project_fennevia_title()}</h3>
+                        <p>{m.entry_project_fennevia_short()}</p>
+                        <div class="project-actions">
+                            <a
+                                class="button-primary"
+                                href="https://github.com/yutinglia/fennevia"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {m.project_fennevia_github()}
+                                <ArrowUpRight />
+                            </a>
+                            <a class="text-link" href={projectsHref}>
+                                {m.entry_featured_details()}
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+                    </div>
+                </article>
+
                 <div class="side-projects">
                     {#each sideProjects as project, index}
                         <article
@@ -235,7 +275,14 @@
                                 rel="noopener noreferrer"
                                 aria-label={`${project.title} — ${m.project_view_github()}`}
                             >
-                                <img src={project.image} alt={project.alt} width="1600" height="900" />
+                                <img
+                                    src={project.image}
+                                    alt={project.alt}
+                                    width="1600"
+                                    height="900"
+                                    loading="lazy"
+                                    decoding="async"
+                                />
                             </a>
                             <div class="side-project-copy">
                                 <span class="project-index">{project.index}</span>
@@ -444,18 +491,23 @@
 
     .work-grid {
         display: grid;
-        grid-template-columns: minmax(0, 1.22fr) minmax(390px, 0.78fr);
-        gap: 16px;
+        gap: 18px;
     }
 
-    .setlist-card {
+    .featured-card {
+        --project-accent: var(--color-primary);
+
         display: flex;
         min-width: 0;
         flex-direction: column;
         overflow: hidden;
     }
 
-    .setlist-media {
+    .fennevia-card {
+        --project-accent: #8bc8ff;
+    }
+
+    .featured-media {
         position: relative;
         display: block;
         overflow: hidden;
@@ -464,7 +516,7 @@
         background: #090a0b;
     }
 
-    .setlist-media::after,
+    .featured-media::after,
     .side-project-media::after {
         position: absolute;
         inset: 0;
@@ -473,7 +525,7 @@
         pointer-events: none;
     }
 
-    .setlist-media img,
+    .featured-media img,
     .side-project-media img {
         width: 100%;
         height: 100%;
@@ -481,7 +533,7 @@
         transition: transform 420ms var(--ease-quick), filter 420ms var(--ease-quick);
     }
 
-    .setlist-media:hover img,
+    .featured-media:hover img,
     .side-project-media:hover img {
         filter: saturate(1.08);
         transform: scale(1.018);
@@ -505,7 +557,7 @@
         backdrop-filter: blur(12px);
     }
 
-    .setlist-copy {
+    .featured-copy {
         display: grid;
         grid-template-columns: minmax(0, 1fr) minmax(230px, 0.55fr);
         gap: 12px 38px;
@@ -525,7 +577,7 @@
         text-transform: uppercase;
     }
 
-    .setlist-copy h3 {
+    .featured-copy h3 {
         margin: 34px 0 0;
         font-size: clamp(46px, 6vw, 78px);
         font-weight: 520;
@@ -533,7 +585,7 @@
         letter-spacing: -0.07em;
     }
 
-    .setlist-copy > p {
+    .featured-copy > p {
         align-self: end;
         margin: 34px 0 0;
         color: var(--color-muted-foreground);
@@ -547,9 +599,36 @@
         padding-top: 10px;
     }
 
+    .featured-card .status-pill {
+        border-color: color-mix(in srgb, var(--project-accent) 28%, transparent);
+        background: color-mix(in srgb, var(--project-accent) 7%, transparent);
+        color: var(--project-accent);
+    }
+
+    .featured-card .status-dot {
+        background: var(--project-accent);
+        box-shadow: 0 0 0 4px color-mix(in srgb, var(--project-accent) 9%, transparent);
+    }
+
+    .featured-card .button-primary {
+        background: var(--project-accent);
+        color: var(--color-ink);
+    }
+
+    .featured-card .button-primary:hover {
+        background: color-mix(in srgb, var(--project-accent) 82%, white);
+    }
+
+    .featured-card .text-link:hover {
+        color: var(--project-accent);
+    }
+
     .side-projects {
         display: grid;
         gap: 16px;
+        width: min(100%, 900px);
+        justify-self: end;
+        margin-top: clamp(28px, 5vw, 68px);
     }
 
     .side-project {
@@ -641,17 +720,21 @@
         gap: clamp(54px, 9vw, 140px);
         margin-top: clamp(124px, 16vw, 230px);
         padding: clamp(34px, 6vw, 80px);
+        border: 1px solid var(--color-border);
         border-radius: 28px;
-        background: var(--color-paper);
-        color: var(--color-ink);
+        background:
+            radial-gradient(circle at 14% 12%, rgba(201, 255, 114, 0.07), transparent 38%),
+            linear-gradient(135deg, rgba(14, 20, 22, 0.96), rgba(7, 11, 13, 0.94));
+        box-shadow: 0 38px 120px rgba(0, 0, 0, 0.24);
+        color: var(--color-foreground);
     }
 
     .routes-heading .section-kicker {
-        color: rgba(6, 9, 11, 0.5);
+        color: var(--color-dim-foreground);
     }
 
     .routes-heading .section-kicker::before {
-        background: #315b22;
+        background: var(--color-primary);
     }
 
     .routes-heading h2 {
@@ -667,13 +750,13 @@
     .routes-heading > p:last-child {
         max-width: 500px;
         margin: 28px 0 0;
-        color: rgba(6, 9, 11, 0.64);
+        color: var(--color-muted-foreground);
         font-size: 15px;
         line-height: 1.72;
     }
 
     .route-list {
-        border-top: 1px solid rgba(6, 9, 11, 0.2);
+        border-top: 1px solid var(--color-border-strong);
     }
 
     .route-list > a {
@@ -683,17 +766,17 @@
         gap: 16px;
         min-height: 118px;
         padding: 18px 6px;
-        border-bottom: 1px solid rgba(6, 9, 11, 0.16);
+        border-bottom: 1px solid var(--color-border);
         transition: padding 180ms var(--ease-quick), background 180ms var(--ease-quick);
     }
 
     .route-list > a:hover {
         padding-inline: 14px;
-        background: rgba(6, 9, 11, 0.035);
+        background: rgba(244, 246, 241, 0.04);
     }
 
     .route-index {
-        color: rgba(6, 9, 11, 0.42);
+        color: var(--color-primary);
         font-family: var(--font-display);
         font-size: 9px;
     }
@@ -710,9 +793,13 @@
     }
 
     .route-copy > span {
-        color: rgba(6, 9, 11, 0.58);
+        color: var(--color-muted-foreground);
         font-size: 13px;
         line-height: 1.5;
+    }
+
+    .route-list > a :global(svg) {
+        color: var(--color-primary);
     }
 
     @media (max-width: 1120px) {
@@ -725,12 +812,8 @@
             grid-column: 2;
         }
 
-        .work-grid {
-            grid-template-columns: 1fr;
-        }
-
         .side-projects {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            width: 100%;
         }
 
         .side-project {
@@ -763,11 +846,11 @@
             max-width: 650px;
         }
 
-        .setlist-copy {
+        .featured-copy {
             grid-template-columns: 1fr;
         }
 
-        .setlist-copy > p,
+        .featured-copy > p,
         .project-actions {
             grid-column: auto;
         }
@@ -824,13 +907,13 @@
             grid-template-columns: 1fr;
         }
 
-        .setlist-card,
+        .featured-card,
         .side-project,
         .routes-section {
             border-radius: 22px;
         }
 
-        .setlist-copy {
+        .featured-copy {
             padding: 26px 22px 30px;
         }
 
@@ -839,11 +922,11 @@
             flex-direction: column;
         }
 
-        .setlist-copy h3 {
+        .featured-copy h3 {
             margin-top: 22px;
         }
 
-        .setlist-copy > p {
+        .featured-copy > p {
             margin-top: 10px;
         }
 
@@ -866,7 +949,7 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-        .setlist-media:hover img,
+        .featured-media:hover img,
         .side-project-media:hover img,
         .side-project-link:hover :global(svg) {
             transform: none;
