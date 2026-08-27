@@ -36,31 +36,13 @@
         m.project_setlist_feature_languages(),
     ]);
 
+    const fenneviaFeatures = $derived([
+        m.project_fennevia_feature_edges(),
+        m.project_fennevia_feature_native(),
+        m.project_fennevia_feature_recovery(),
+    ]);
+
     const secondaryProjects = $derived([
-        {
-            number: "02",
-            slug: "fennevia",
-            title: m.project_fennevia_title(),
-            kicker: m.project_fennevia_kicker(),
-            status: m.project_fennevia_status(),
-            description: m.project_fennevia_description(),
-            image: `${base}/projects/fennevia-overview.svg`,
-            alt: m.project_fennevia_alt(),
-            accent: "#8bc8ff",
-            features: [
-                m.project_fennevia_feature_edges(),
-                m.project_fennevia_feature_native(),
-                m.project_fennevia_feature_recovery(),
-            ],
-            tags: ["Firefox", "userChrome.css", "JavaScript", "Windows"],
-            links: [
-                {
-                    label: m.project_fennevia_github(),
-                    href: "https://github.com/yutinglia/fennevia",
-                    primary: true,
-                },
-            ],
-        },
         {
             number: "03",
             slug: "dial",
@@ -170,9 +152,9 @@
         </section>
 
         <section class="project-section" aria-labelledby="setlist-title">
-            <article class="setlist-project glass-panel" data-reveal>
+            <article class="primary-project glass-panel" data-reveal>
                 <a
-                    class="project-media setlist-media"
+                    class="project-media primary-media"
                     href="https://setlist.yutinglia.com"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -247,6 +229,58 @@
             </div>
         </section>
 
+        <section class="project-section fennevia-section" aria-labelledby="fennevia-title">
+            <article class="primary-project fennevia-project glass-panel" data-reveal>
+                <a
+                    class="project-media primary-media"
+                    href="https://github.com/yutinglia/fennevia"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={m.project_fennevia_github()}
+                >
+                    <img
+                        src={`${base}/projects/fennevia-customize-hero.png`}
+                        alt={m.project_fennevia_alt()}
+                        width="1672"
+                        height="941"
+                        loading="lazy"
+                        decoding="async"
+                    />
+                    <span class="project-number" aria-hidden="true">02</span>
+                </a>
+
+                <div class="project-copy">
+                    <div class="project-meta">
+                        <span>{m.project_fennevia_kicker()}</span>
+                        <span class="project-status">
+                            <span class="status-light" aria-hidden="true"></span>
+                            {m.project_fennevia_status()}
+                        </span>
+                    </div>
+                    <h2 id="fennevia-title">{m.project_fennevia_title()}</h2>
+                    <p class="project-description">{m.project_fennevia_description()}</p>
+
+                    <ul class="feature-list">
+                        {#each fenneviaFeatures as feature}
+                            <li>{feature}</li>
+                        {/each}
+                    </ul>
+
+                    <div class="project-links">
+                        <a
+                            class="project-link project-link-primary"
+                            href="https://github.com/yutinglia/fennevia"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            {m.project_fennevia_github()}
+                            <ArrowUpRight />
+                        </a>
+                    </div>
+                </div>
+            </article>
+        </section>
+
         <section class="secondary-grid" aria-label={m.projects_more_label()}>
             {#each secondaryProjects as project, index}
                 <article
@@ -255,7 +289,14 @@
                     style={`--project-accent: ${project.accent}; --reveal-delay: ${index * 80}ms`}
                 >
                     <div class="secondary-media">
-                        <img src={project.image} alt={project.alt} width="1600" height="900" />
+                        <img
+                            src={project.image}
+                            alt={project.alt}
+                            width="1600"
+                            height="900"
+                            loading="lazy"
+                            decoding="async"
+                        />
                     </div>
                     <div class="secondary-copy">
                         <div class="project-meta">
@@ -419,11 +460,19 @@
         gap: 16px;
     }
 
-    .setlist-project {
+    .project-section + .project-section {
+        margin-top: clamp(112px, 15vw, 210px);
+    }
+
+    .primary-project {
         display: flex;
         flex-direction: column;
         overflow: hidden;
         --project-accent: #c9ff72;
+    }
+
+    .fennevia-project {
+        --project-accent: #8bc8ff;
     }
 
     .project-media,
@@ -434,7 +483,7 @@
         background: #0b0c0e;
     }
 
-    .setlist-media {
+    .primary-media {
         min-height: 0;
         aspect-ratio: 16 / 9;
         border-bottom: 1px solid var(--color-border);
@@ -691,6 +740,10 @@
         margin-top: clamp(112px, 15vw, 210px);
     }
 
+    .secondary-grid .project-dial {
+        grid-column: 2;
+    }
+
     .secondary-project {
         display: flex;
         min-width: 0;
@@ -739,18 +792,22 @@
         gap: clamp(38px, 7vw, 100px);
         margin-top: clamp(120px, 16vw, 224px);
         padding: clamp(34px, 6vw, 78px);
+        border: 1px solid var(--color-border);
         border-radius: 28px;
-        background: var(--color-paper);
-        color: var(--color-ink);
+        background:
+            radial-gradient(circle at 12% 10%, rgba(201, 255, 114, 0.07), transparent 38%),
+            linear-gradient(135deg, rgba(14, 20, 22, 0.96), rgba(7, 11, 13, 0.94));
+        box-shadow: 0 38px 120px rgba(0, 0, 0, 0.24);
+        color: var(--color-foreground);
     }
 
     .closing-panel .section-kicker {
         align-self: start;
-        color: rgba(6, 9, 11, 0.5);
+        color: var(--color-dim-foreground);
     }
 
     .closing-panel .section-kicker::before {
-        background: #315b22;
+        background: var(--color-primary);
     }
 
     .closing-panel h2 {
@@ -766,7 +823,7 @@
     .closing-panel div > p {
         max-width: 650px;
         margin: 26px 0 0;
-        color: rgba(6, 9, 11, 0.64);
+        color: var(--color-muted-foreground);
         font-size: 15px;
         line-height: 1.72;
     }
@@ -778,7 +835,7 @@
         justify-content: space-between;
         gap: 24px;
         padding: 0 18px;
-        border: 1px solid rgba(6, 9, 11, 0.28);
+        border: 1px solid var(--color-border-strong);
         border-radius: 999px;
         font-family: var(--font-display);
         font-size: 9px;
@@ -795,7 +852,7 @@
     }
 
     .closing-link:focus-visible {
-        outline-color: #315b22;
+        outline-color: var(--color-primary);
     }
 
     @media (max-width: 1120px) {
@@ -820,7 +877,7 @@
             max-width: 460px;
         }
 
-        .setlist-media {
+        .primary-media {
             min-height: 0;
             aspect-ratio: 16 / 9;
             border-right: 0;
@@ -833,6 +890,10 @@
 
         .secondary-grid {
             grid-template-columns: 1fr;
+        }
+
+        .secondary-grid .project-dial {
+            grid-column: auto;
         }
 
         .secondary-copy {
@@ -862,7 +923,7 @@
             grid-template-columns: 1fr auto;
         }
 
-        .setlist-project,
+        .primary-project,
         .architecture-panel,
         .secondary-project,
         .closing-panel {
