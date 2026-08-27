@@ -56,11 +56,11 @@
             kicker: m.project_fennevia_kicker(),
             status: m.project_fennevia_status(),
             description: m.project_fennevia_description(),
-            image: `${base}/projects/fennevia-overview.svg`,
+            image: `${base}/projects/fennevia-customize-hero.png`,
             alt: m.project_fennevia_alt(),
-            width: 1600,
-            height: 900,
-            technologies: ["JavaScript", "TypeScript", "Svelte", "PowerShell"],
+            width: 1672,
+            height: 941,
+            technologies: ["Svelte 5", "TypeScript", "Firefox AutoConfig", "PowerShell"],
             links: [
                 {
                     label: m.project_fennevia_github(),
@@ -841,7 +841,8 @@
         transform: translateY(-4px);
     }
 
-    .project-setlist {
+    .project-setlist,
+    .project-fennevia {
         grid-column: 1 / -1;
         display: flex;
         flex-direction: column;
@@ -850,12 +851,11 @@
 
     .project-fennevia {
         --project-accent: var(--site-blue);
-        grid-column: 1 / 8;
     }
 
     .project-dial {
         --project-accent: var(--site-coral);
-        grid-column: 8 / -1;
+        grid-column: 3 / 11;
     }
 
     .project-visual {
@@ -896,7 +896,8 @@
         padding: clamp(28px, 4vw, 54px);
     }
 
-    .project-setlist .project-copy {
+    .project-setlist .project-copy,
+    .project-fennevia .project-copy {
         justify-content: center;
         min-height: auto;
     }
@@ -941,7 +942,8 @@
         text-transform: uppercase;
     }
 
-    .project-setlist .project-kicker {
+    .project-setlist .project-kicker,
+    .project-fennevia .project-kicker {
         margin-top: clamp(36px, 5vw, 64px);
     }
 
@@ -1183,14 +1185,18 @@
     .contact-section {
         margin-top: clamp(132px, 17vw, 240px);
         padding: clamp(34px, 6vw, 82px);
+        border: 1px solid var(--site-line);
         border-radius: var(--site-radius);
-        background: var(--site-paper);
-        color: var(--site-ink);
+        background:
+            radial-gradient(circle at 12% 10%, rgba(201, 255, 114, 0.07), transparent 38%),
+            linear-gradient(135deg, rgba(14, 20, 22, 0.97), rgba(7, 11, 13, 0.95));
+        box-shadow: 0 38px 120px rgba(0, 0, 0, 0.24);
+        color: var(--site-text);
         scroll-margin-top: 106px;
     }
 
     .contact-section .section-kicker {
-        color: rgba(6, 9, 11, 0.52);
+        color: var(--site-dim);
     }
 
     .contact-layout {
@@ -1208,7 +1214,7 @@
 
     .contact-copy > p {
         margin: 0;
-        color: rgba(6, 9, 11, 0.68);
+        color: var(--site-muted);
         font-size: 16px;
         line-height: 1.7;
     }
@@ -1226,9 +1232,9 @@
         justify-content: space-between;
         gap: 20px;
         padding: 0 18px;
-        border: 1px solid rgba(6, 9, 11, 0.22);
+        border: 1px solid var(--site-line-strong);
         border-radius: 999px;
-        color: var(--site-ink);
+        color: var(--site-text);
         font-family: var(--font-display);
         font-size: 10px;
         font-weight: 650;
@@ -1241,19 +1247,24 @@
     }
 
     .contact-links .contact-link-primary {
-        border-color: var(--site-ink);
-        background: var(--site-ink);
-        color: var(--site-paper);
-    }
-
-    .contact-links a:hover {
-        border-color: var(--site-ink);
+        border-color: var(--site-signal);
         background: var(--site-signal);
         color: var(--site-ink);
     }
 
+    .contact-links a:hover {
+        border-color: var(--site-signal);
+        background: color-mix(in srgb, var(--site-signal) 12%, transparent);
+        color: var(--site-text);
+    }
+
+    .contact-links .contact-link-primary:hover {
+        background: color-mix(in srgb, var(--site-signal) 82%, white);
+        color: var(--site-ink);
+    }
+
     .contact-links a:focus-visible {
-        outline-color: #174c38;
+        outline-color: var(--site-signal);
     }
 
     .portfolio-footer {
@@ -1325,12 +1336,8 @@
             max-width: 620px;
         }
 
-        .project-fennevia {
-            grid-column: 1 / 7;
-        }
-
         .project-dial {
-            grid-column: 7 / -1;
+            grid-column: 2 / 12;
         }
 
         .about-layout {
@@ -1516,7 +1523,8 @@
         }
 
         .project-kicker,
-        .project-setlist .project-kicker {
+        .project-setlist .project-kicker,
+        .project-fennevia .project-kicker {
             margin-top: 44px;
         }
 
