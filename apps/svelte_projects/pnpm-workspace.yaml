@@ -22,7 +22,7 @@ catalog:
   "@sveltejs/vite-plugin-svelte": ^7.3.1
   "@tailwindcss/vite": ^4.3.4
   "@types/node": ^26.6.6
-  "@inlang/paraglide-js": ^2.29.3
+  "@inlang/paraglide-js": ^3.2.0
   svelte: ^5.57.3
   svelte-check: ^4.7.8
   tailwindcss: ^4.3.4
